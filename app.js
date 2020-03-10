@@ -32,21 +32,21 @@ app.get('/api/Sheet/Get', (req, res) => {
 
 app.post('/api/Sheet/Save', (req, res) => {
 
-    const { row, col, text } = req.body;
+    const { row, col, value } = req.body;
 
     if (!sheet) {
         res.status(400);
     } else {
-        if (sheet.Cells[row]) {
-            sheet.Cells[row][col] = text;
-        } else {
-            sheet.Cells[row] = { [col]: text };
-        }
-
-        io.emit('onCellSave', sheet.Cells);
+        sheet.Cells[row] = { ...sheet.Cells[row], [col]: value };
+        io.emit('onCellSave', { row, col, value });
         res.status(200).send();
 
     }
 });
 
-module.exports = {app:app, server:server};
+io.on('connection', (socket) => {
+    socket.on('onCellStartEditing', (data) => {
+        socket.broadcast.emit('onCellStartEditing', data);
+    })
+});
+module.exports = { app, server };
