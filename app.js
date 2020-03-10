@@ -23,8 +23,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/api/Sheet/Get', (req, res) => {
 
-    console.log('/api/Sheet/Get works');
-    
     if (!sheet) {
         res.status(400).json({ err: err });
     } else {
@@ -36,10 +34,6 @@ app.post('/api/Sheet/Save', (req, res) => {
 
     const { row, col, text } = req.body;
 
-    // console.log('test');
-    // console.log(sheet);
-    // console.log("req.body", req.body);
-
     if (!sheet) {
         res.status(400);
     } else {
@@ -50,7 +44,7 @@ app.post('/api/Sheet/Save', (req, res) => {
         }
 
         io.emit('onCellSave', sheet.Cells);
-        res.status(200).json({ res: sheet.Cells });
+        res.status(200).send();
 
     }
 });
